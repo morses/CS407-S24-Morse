@@ -5,7 +5,7 @@ function createRenderer(canvas : HTMLCanvasElement) : WebGLRenderer {
         antialias: true,
         canvas: canvas
     });
-    renderer.physicallyCorrectLights = true;
+    //renderer.physicallyCorrectLights = true;
   return renderer;
 }
 

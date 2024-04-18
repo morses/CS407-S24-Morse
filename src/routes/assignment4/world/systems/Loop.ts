@@ -31,6 +31,13 @@ export class Loop {
     addUpdateable(item: Animateable) {
         this.updateables.push(item);
     }
+
+    removeUpdateable(item: Animateable) {
+        const index = this.updateables.indexOf(item);
+        if (index !== -1) {
+            this.updateables.splice(index, 1);
+        }
+    }
     
     tick() {
         this.delta = this.clock.getDelta();

@@ -9,7 +9,8 @@
         </button>
         <button type="button" on:click={wireframeHandler}>
             {@html wireframe ? 'Hide&nbsp;' : 'Show'} Wireframe
-            </button>
+        </button>
+        <hr>
         <label>
             <input type="checkbox" bind:checked={ambientLight} on:change={updateLighting} />
             Ambient
@@ -18,12 +19,28 @@
             <input type="checkbox" bind:checked={pointLight} on:change={updateLighting} />
             Point
         </label>
+        <hr>
         <div class="control-item">
             <ColorPicker 
                 bind:hex 
                 on:input={updateColor}
                 isAlpha={false}
             />
+        </div>
+        <hr>
+        <div>
+            {#each geometryTypes as gt}
+                <label>
+                    <input
+                        type="radio"
+                        name="geometryType"
+                        value={gt}
+                        bind:group={chosenGeometryType}
+                        on:change={updateGeometryType}
+                        />
+                    {gt}
+                </label>
+            {/each}
         </div>
     </article>
     <article class="graphics">
@@ -65,6 +82,8 @@
 
     .controls p {
         border-bottom: 2px solid #8c8e94;
+        text-align: center;
+        text-transform: uppercase;
     }
 
     .controls button {
@@ -109,6 +128,7 @@
     import { onMount } from 'svelte';
     import ColorPicker from 'svelte-awesome-color-picker';
     import { World } from './world/World.js';
+    import { GeometryType } from './world/common.js';
 
     console.log('script executing');
 
@@ -118,6 +138,9 @@
 
     let running = true;
     let wireframe = false;
+
+    let geometryTypes = Object.values(GeometryType);
+    let chosenGeometryType = geometryTypes[0];
 
     let ambientLight = true;
     let pointLight = true;
@@ -134,6 +157,11 @@
             fps = world.getFrameRate();            
         }, 2000);
     });
+
+    function updateGeometryType() {
+        world.setGeometryType(chosenGeometryType);
+        world.render();
+    }
 
         // Update our lighting based on the checkboxes
     function updateLighting() {

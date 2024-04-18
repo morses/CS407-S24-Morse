@@ -7,6 +7,8 @@ import { createRenderer } from './systems/renderer.js';
 import { Resizer } from './systems/Resizer.js';
 import { Loop } from './systems/Loop.js';
 
+import { GeometryType } from './common.js';
+
 import { AxesHelper, PerspectiveCamera, Light, Scene, WebGLRenderer, Mesh } from 'three';
 
 class World {
@@ -26,7 +28,7 @@ class World {
 
         const axesHelper = new AxesHelper(5);
 
-        this.ornament = new Ornament();
+        this.ornament = new Ornament(GeometryType.Octahedron);
         this.scene.add(this.ornament);
         this.scene.add(axesHelper);
         this.lights.forEach(light => this.scene.add(light));
@@ -47,6 +49,14 @@ class World {
 
     stop() {
         this.loop.stop();
+    }
+
+    setGeometryType(gt: GeometryType) {
+        this.scene.remove(this.ornament);
+        this.loop.removeUpdateable(this.ornament);
+        this.ornament = new Ornament(gt);
+        this.scene.add(this.ornament);
+        this.loop.addUpdateable(this.ornament);
     }
 
     setAmbientLight(value : boolean)
