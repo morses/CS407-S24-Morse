@@ -1,6 +1,6 @@
 export const personalInfo = {
     name: 'Scot Morse',
-    githubURL: 'https://github.com/morses'
+    githubURL: 'https://github.com/morses/cs407-s24-morse'
 };
 
 export const courseInfo = {

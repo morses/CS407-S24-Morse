@@ -16,8 +16,7 @@
 			This is a portfolio of my work for this course taken during the {courseInfo.term} term.  Each assignment has it's own page, and there is also a page for the final project.  It showcases my work and what I have learned in this course about computer graphics, <a href="https://www.khronos.org/api/webgl">WebGL</a>, <a href="https://threejs.org/">three.js</a>, and other topics such as <a href="https://webassembly.org/">WASM</a>, <a href="https://svelte.dev/">Svelte</a>, and data visualization with <a href="https://d3js.org/">D3.js</a>.
 		</p>
 		<ul>
-			<!-- <li>Source code:  <a href="{personalInfo.githubURL}">{personalInfo.githubURL}/coming/soon</a></li> -->
-			<li>Source code: coming soon...</li>
+			<li>Source code:  <a href="{personalInfo.githubURL}">{personalInfo.githubURL}/coming/soon</a></li>
 			<li>Class repository: <a href="{courseInfo.githubURL}">{courseInfo.githubURL}</a></li>
 		</ul>
 	
