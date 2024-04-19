@@ -45,8 +45,10 @@
     </article>
     <article class="graphics">
         <code>{Math.round(fps)} FPS</code>
-        <canvas
+            <canvas
             bind:this={canvas}
+            tabindex="0"
+            on:keydown={onKeyDown}
             width={width} 
             height={height}
         />
@@ -150,6 +152,7 @@
 
     onMount(() => {
         console.log('onMount: building scene');
+        canvas.focus();
         world = new World(canvas);
         //hex = world.getColor();  // why doesn't this update?
         world.start();
@@ -161,6 +164,11 @@
     function updateGeometryType() {
         world.setGeometryType(chosenGeometryType);
         world.render();
+        canvas.focus();
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+        world.onKeyDown(event);
     }
 
         // Update our lighting based on the checkboxes
@@ -168,6 +176,7 @@
         world.setAmbientLight(ambientLight);
         world.setPointLight(pointLight);
         world.render(); // don't assume it's animating and rendering
+        canvas.focus();
     }
 
     // Update color of the torus
@@ -182,12 +191,14 @@
         newColor = hex.substring(0, 7); // still not understanding something as this isn't working, will just disable alpha for now
         world.setColor(newColor);
         world.render();
+        canvas.focus();
     }
 
     // Animate button click event handler
     function animateHandler() {
         running ? world.stop() : world.start();
         running = !running;
+        canvas.focus();
     }
 
     // Wireframe button click event handler
@@ -195,5 +206,6 @@
         wireframe = !wireframe;
         world.setWireframe(wireframe);
         world.render();
+        canvas.focus();
     }
 </script>

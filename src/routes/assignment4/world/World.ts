@@ -51,6 +51,23 @@ class World {
         this.loop.stop();
     }
 
+    onKeyDown(event: KeyboardEvent) {
+        if (event.key === 'a') {
+            this.ornament.rotateChildrenUD(1);
+        }
+        else if (event.key === 'd') {
+            this.ornament.rotateChildrenUD(-1);
+        }
+        else if (event.key === 'w') {
+            this.ornament.rotateChildrenLR(1);
+        }
+        else if (event.key === 's') {
+            this.ornament.rotateChildrenLR(-1);
+        }
+
+        this.render();
+    }
+
     setGeometryType(gt: GeometryType) {
         this.scene.remove(this.ornament);
         this.loop.removeUpdateable(this.ornament);

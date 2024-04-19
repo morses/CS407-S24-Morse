@@ -1,11 +1,11 @@
-import { BufferGeometry, OctahedronGeometry, SphereGeometry, CylinderGeometry, CapsuleGeometry, ConeGeometry, Mesh, MeshStandardMaterial,MeshPhysicalMaterial, Vector3 } from 'three';
+import { BufferGeometry, OctahedronGeometry, SphereGeometry, IcosahedronGeometry, CylinderGeometry, CapsuleGeometry, ConeGeometry, Mesh, MeshStandardMaterial,MeshPhysicalMaterial, Vector3 } from 'three';
 import type { Animateable } from '../Animateable.js';
 import { getVertices } from '../util/geometryTools.js';
 import { GeometryType } from '../common.js';
 
 class Sphere extends Mesh {
     constructor(radius: number = 1.0) {
-        const geometry = new SphereGeometry(radius, 32, 32);
+        const geometry = new IcosahedronGeometry(radius, 0);// new SphereGeometry(radius, 32, 32);
         const material = new MeshPhysicalMaterial({
             color: '#2f4eca',
             roughness: 0.478,
@@ -15,7 +15,7 @@ class Sphere extends Mesh {
             iridescenceIOR: 2.18,
             sheen: 0.796,
             sheenRoughness: 0.555,
-            sheenColor: '#1a8e1c'
+            sheenColor: '#1a8e1c',
         });
         super(geometry, material);
     }
@@ -72,6 +72,18 @@ export class Ornament extends Mesh implements Animateable {
             sphere.position.copy(p2);
             this.add(sphere);
             p2.set(0,0,0);
+        });
+    }
+
+    rotateChildrenUD(direction: number) {
+        this.children.forEach((child) => {
+            child.rotation.x += direction * 0.2;
+        });
+    }
+
+    rotateChildrenLR(direction: number) {
+        this.children.forEach((child) => {
+            child.rotation.y += direction * 0.2;
         });
     }
 
