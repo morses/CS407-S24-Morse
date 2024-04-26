@@ -19,6 +19,7 @@
 		<li><a href="/assignment1">Svelte app and web deployment</a> &lAarr; if you're seeing this on the web then it's working</li>
 		<li><a href="/assignment3">World App &amp; Lighting</a></li>
 		<li><a href="/assignment4">Hierarchical Scene &amp; Transformations with Animation</a></li>
+		<li><a href="/assignment5">Manually create a geometry with per-vertex colors &amp; add camera controls</a></li>
 	</ul>
 </div>
 
