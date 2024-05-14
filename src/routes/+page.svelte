@@ -20,6 +20,8 @@
 		<li><a href="/assignment3">World App &amp; Lighting</a></li>
 		<li><a href="/assignment4">Hierarchical Scene &amp; Transformations with Animation</a></li>
 		<li><a href="/assignment5">Manually create a geometry with per-vertex colors &amp; add camera controls</a></li>
+		<li><a href="https://cs-407-graphics-local.vercel.app/assignment6">Use a pre-made model with animation clips</a> (no source available)</li>
+		<li><a href="/assignment7">Shaders!</a></li>
 	</ul>
 </div>
 
