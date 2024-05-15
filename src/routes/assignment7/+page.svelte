@@ -10,21 +10,40 @@
 </div>
 
 <section>
-    <button type="button" on:click={compileShaders}>Compile and Use Shaders</button>
+    <article>
+        <button type="button" on:click={compileShaders}>Compile and Use Shaders</button>
+        <button type="button" on:click={showShaderPrograms}>Show Full Shader Programs Text</button>
+    </article>
 </section>
+<Modal bind:showModal>
+    <h2 slot="header">Full text of shader programs</h2>
+    <Highlight language={glsl} code={shaderProgramsText} />
+</Modal>
 <section>
     <article class="controls">
         <p>Controls</p>
         <button type="button" on:click={wireframeHandler}>
             {@html wireframe ? 'Hide&nbsp;' : 'Show'} Wireframe
         </button>
-        <hr>
+        <p>Uniforms</p>
         <div class="control-item">
             <ColorPicker 
                 bind:hex 
                 on:input={updateColor}
                 isAlpha={false}
             />
+        <label>
+            <input type="range" bind:value={x} on:input={updateX} min="-50" max="50" step="0.1" />
+            X: {x}
+        </label>
+        <label>
+            <input type="range" bind:value={y} on:input={updateY} min="-50" max="50" step="0.1" />
+            Y: {y}
+        </label>
+        <label>
+            <input type="range" bind:value={z} on:input={updateZ} min="-50" max="50" step="0.1" />
+            Z: {z}
+        </label>
         </div>
     </article>
     <article class="graphics">
@@ -37,20 +56,17 @@
         />
     </article>
     <article class="description">
-        <p>The goal of this assignment is to ...</p>  <p>Requirements are:</p>
+        <p>The goal of this assignment is to do something cool with shaders.</p>  <p>Requirements are:</p>
         <ul>
-            <li></li>
-            <li></li>
-            <li></li>
+            <li>Write your own shaders to do something interesting.  Feel free to find some inspiration online, but you'll need to build a big part of it yourself.  Remember to attribute where you got the idea from, if that's what you did.</li>
+            <li>Include interaction of some kind that sends uniforms or attributes to your custom shader.</li>
+            <li>Include more than one object in your scene, but only have your shaders applied to one of those objects.  This will enable you to see how different "materials" (and thus shaders) are used for different objects.</li>
         </ul>
-        <p>Use the mouse to orbit and pan the camera: left mouse click (hold down) or single finger swipe to orbit, right mouse click (hold down), arrow keys, or two-finger swipe to pan; zoom with the scroll wheel or pinch gesture.</p>
+        <p>The example/code shown here is for use in class to demonstrate different shader code, not as an example of a finished assignment.  See the file <code>Shader_example.md</code> for example code to try out.</p>
     </article>
 </section>
 <div>
-    <h2 class="center-container">Blinn-Phong</h2>
     <p>Built-in uniforms and attributes: <a href="https://threejs.org/docs/index.html#api/en/renderers/webgl/WebGLProgram">WebGLProgram</a></p>
-    <Highlight language={glsl} code={vertexShaderPhong} />
-    <Highlight language={glsl} code={fragmentShaderPhong} />
 </div>
 <style>
     section {
@@ -150,8 +166,10 @@
     import Highlight from 'svelte-highlight';
     import glsl from 'svelte-highlight/languages/glsl';
     import github from 'svelte-highlight/styles/github';
-    
-    console.log('script executing');
+    import Modal from './Modal.svelte';
+
+    let showModal = false;
+    let shaderProgramsText = '';
 
     const width = 800;
     const height = 600;
@@ -159,23 +177,26 @@
 
     let vertexShaderText = `
 void main() {
-	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 }
 `;
     let fragmentShaderText = `
 void main() {
-	gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+    gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
 }
 `;
 
+    let x = 0;
+    let y = 0;
+    let z = 0;
+
     let wireframe = false;
 
-    let hex = '#ffd700';
+    let hex = '#ff0000';
     let canvas : HTMLCanvasElement;
     let world : World;
 
     onMount(() => {
-        console.log('onMount: building scene');
         canvas.focus();
         world = new World(canvas);
         world.start();
@@ -185,9 +206,12 @@ void main() {
     });
 
     function compileShaders() {
-        console.log(`vertexShaderText = ${vertexShaderText}`);
-        console.log(`fragmentShaderText = ${fragmentShaderText}`);
         world.updateShaders(vertexShaderText, fragmentShaderText);
+    }
+
+    function showShaderPrograms() {
+        shaderProgramsText = world.getFullShaderProgramsText();
+        showModal = true;
     }
 
 
@@ -206,6 +230,21 @@ void main() {
         canvas.focus();
     }
 
+    function updateX() {
+        world.setX(x);
+        world.render();
+    }
+
+    function updateY() {
+        world.setY(y);
+        world.render();
+    }
+
+    function updateZ() {
+        world.setZ(z);
+        world.render();
+    }
+
     // Wireframe button click event handler
     function wireframeHandler() {
         wireframe = !wireframe;
@@ -214,27 +253,4 @@ void main() {
         canvas.focus();
     }
 
-    let vertexShaderPhong = `
-    varying vec3 vViewPosition;
-    void main() {
-        vViewPosition = -mvPosition.xyz;
-        gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4( position, 1.0 );
-    }
-    `;
-
-    let fragmentShaderPhong = `
-    uniform vec3 diffuse;
-    uniform vec3 emissive;
-    uniform vec3 specular;
-    uniform float shininess;
-    uniform float opacity;
-
-    void main() {
-        vec4 diffuseColor = vec4( diffuse, opacity );
-        ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
-	    vec3 totalEmissiveRadiance = emissive;
-        vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;
-        gl_FragColor = vec4( outgoingLight, diffuseColor.a );
-    }
-    `;
 </script>

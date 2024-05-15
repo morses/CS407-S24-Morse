@@ -7,9 +7,10 @@ import { createRenderer } from './systems/renderer.js';
 import { Resizer } from './systems/Resizer.js';
 import { Loop } from './systems/Loop.js';
 
-import { Controls }  from './systems/Controls.js';
+import { Controls } from './systems/Controls.js';
+import { ShaderProgramUtils } from './util/ShaderInspectionTools.js';
 
-import { AxesHelper, PerspectiveCamera, Light, Scene, WebGLRenderer, Mesh } from 'three';
+import { AxesHelper, PerspectiveCamera, Light, Scene, WebGLRenderer, Mesh, Vector3 } from 'three';
 
 class World {
     private camera : PerspectiveCamera;
@@ -59,9 +60,32 @@ class World {
         this.sphere.setFragmentShader(fragmentShader);
     }
 
+    getFullShaderProgramsText(): string {
+        const shaderInspectionTools = new ShaderProgramUtils(this.renderer, this.scene, this.camera, this.sphere);
+        const vertexShaderText = shaderInspectionTools.findAndOutputShader(this.renderer, this.sphere, 'vertexShader', 'Vertex Shader');
+        const fragmentShaderText = shaderInspectionTools.findAndOutputShader(this.renderer, this.sphere, 'fragmentShader', 'Fragment Shader');
+        return vertexShaderText + '\n\n' + fragmentShaderText;
+    }
+
     setColor(hexValue : string)
     {
-        this.sphere.setColor(hexValue);
+        // convert hex color to RGB triplet in a vec3
+        const r = parseInt(hexValue.substring(1, 3), 16) / 255.0;
+        const g = parseInt(hexValue.substring(3, 5), 16) / 255.0;
+        const b = parseInt(hexValue.substring(5, 7), 16) / 255.0;
+        this.sphere.updateUniform('objColor', new Vector3(r, g, b));
+    }
+
+    setX(value: number) {
+        this.sphere.updateUniform('xValue', value);
+    }
+
+    setY(value: number) {
+        this.sphere.updateUniform('yValue', value);
+    }
+
+    setZ(value: number) {
+        this.sphere.updateUniform('zValue', value);
     }
 
     getColor(): string

@@ -6,7 +6,14 @@ export class Sphere extends Mesh {
 
     constructor(radius: number = 1.0) {
         const geometry = new SphereGeometry(radius, 32, 32);
-        const material = new ShaderMaterial();
+        const material = new ShaderMaterial({
+            uniforms: {
+                objColor: { value: new Vector3(1.0, 0.0, 0.0) },
+                xValue: { value: 0.0 },
+                yValue: { value: 0.0 },
+                zValue: { value: 0.0 }
+            }
+        });
         super(geometry, material);
         this.mainGeometry = geometry;
         this.mainMaterial = material;
@@ -20,6 +27,11 @@ export class Sphere extends Mesh {
     setFragmentShader(fragmentShader: string) { 
         this.mainMaterial.fragmentShader = fragmentShader;
         this.mainMaterial.needsUpdate = true;
+    }
+
+    updateUniform(name: string, value: any) {
+        this.mainMaterial.uniforms[name].value = value;
+        this.mainMaterial.uniformsNeedUpdate = true;
     }
 
     setColor(hexValue: string) {
