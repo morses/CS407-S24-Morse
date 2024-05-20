@@ -37,6 +37,7 @@ class World {
         this.lights.forEach(light => this.scene.add(light));
 
         this.loop.addUpdateable(this.controls); // for the camera controls
+        this.loop.addUpdateable(this.sphere); // for the shader time uniform
 
         // Not currently using the resizer as our canvas has a fixed size
         const resizer = new Resizer(canvas, this.camera, this.renderer);
