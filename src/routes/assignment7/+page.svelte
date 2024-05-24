@@ -1,12 +1,28 @@
 
 <h1>Shaders!</h1>
-<div class="center-container">
+<div class="editor-container">
     <label for="vertexShader" class="centered-label">Vertex Shader</label>
-    <textarea id="vertexShader" class="centered-textarea" bind:value={vertexShaderText} rows="10" cols="100"></textarea>
+    <!-- <textarea id="vertexShader" class="centered-textarea" bind:value={vertexShaderText} rows="10" cols="100"></textarea> -->
+    <CodeMirror
+        bind:value={vertexShaderText}
+        lang={cpp()}
+        styles={{
+            "&": {
+                maxWidth: "100%",
+            },}}
+        theme={oneDark} />
 </div>
-<div class="center-container">
+<div class="editor-container">
     <label for="fragmentShader" class="centered-label">Fragment Shader</label>
-    <textarea id="fragmentShader" class="centered-textarea" bind:value={fragmentShaderText} rows="10" cols="100"></textarea>
+    <!-- <textarea id="fragmentShader" class="centered-textarea" bind:value={fragmentShaderText} rows="10" cols="100"></textarea> -->
+    <CodeMirror
+        bind:value={fragmentShaderText}
+        lang={cpp()}
+        styles={{
+            "&": {
+                maxWidth: "100%",
+            }}}
+        theme={oneDark} />
 </div>
 
 <section>
@@ -79,8 +95,8 @@
         align-items: center;
     }
 
-    .center-container {
-        text-align: center;
+    .editor-container {
+        text-align: left;
     }
 
     .centered-label {
@@ -167,6 +183,9 @@
     import glsl from 'svelte-highlight/languages/glsl';
     import github from 'svelte-highlight/styles/github';
     import Modal from './Modal.svelte';
+    import CodeMirror from 'svelte-codemirror-editor';
+    import { cpp } from '@codemirror/lang-cpp';
+    import { oneDark } from '@codemirror/theme-one-dark';
 
     let showModal = false;
     let shaderProgramsText = '';

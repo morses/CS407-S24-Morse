@@ -351,3 +351,60 @@ void main() {
     gl_FragColor = vec4( color, 1.0 );
 }
 ```
+
+### Specular Light
+Needs to calculate the reflection of the light direction about the normal.  This is the direction of the light that would be reflected off the surface if it were a perfect mirror.  The angle between this direction and the direction to the camera is the angle of reflection.  The specular reflection is the intensity of the light times the specular reflection coefficient times the cosine of the angle of reflection raised to the power of the shininess coefficient.  The shininess coefficient is a measure of how shiny the object is.  The higher the value, the smaller the specular reflection will be.  The specular reflection is added to the ambient and diffuse reflections to get the final color.
+
+```glsl
+// Vertex shader
+out vec3 wsNormal;
+out vec3 wsPosition;
+
+void main() {
+    vec4 wsn = modelMatrix * vec4(normal,0.0);
+    vec4 wsp = modelMatrix * vec4(position,1.0);
+    wsNormal = wsn.xyz;
+    wsPosition = wsp.xyz;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+
+// Fragment shader
+uniform vec3 objColor;
+
+in vec3 wsNormal;
+in vec3 wsPosition;  // world space interpolated position of fragment (per fragment specular)
+uniform float xValue;
+uniform float yValue;
+uniform float zValue;
+// uniform vec3 cameraPosition; // this is declared for us, and is in world coordinates
+
+// Ambient
+vec3 ia = vec3(0.9,0.9,0.6) * 0.2;
+vec3 ka = vec3(1.0,1.0,1.0);
+// Diffuse
+vec3 id = vec3(1.0,1.0,1.0) * 0.6;
+vec3 kd = vec3(1.0,1.0,1.0);
+// Specular
+vec3 is = vec3(1.0,1.0,1.0) * 0.4;
+vec3 ks = vec3(1.0,1.0,1.0);
+float shinyness = 50.0;
+
+void main() {
+    vec3 ca = objColor;
+    vec3 cd = ca;
+    vec3 wsLight = vec3(xValue,yValue,zValue);  // this is in world coordinates
+    vec3 wsNormalizedNormal = normalize(wsNormal);
+    vec3 wsNormalizedLight = normalize(wsLight);
+    vec3 ambient = ia * ka * ca;
+    vec3 diffuse = id * kd * ca * max(dot(wsNormalizedNormal,wsNormalizedLight),0.0);
+
+    vec3 wsEye = normalize(cameraPosition - wsPosition);
+    vec3 wsReflect = 2.0 * dot(wsNormalizedLight,wsNormalizedNormal) * wsNormalizedNormal - wsNormalizedLight;
+    vec3 specular = is * ks * ca * pow(max(dot(wsReflect,wsEye),0.0),shinyness);
+
+    vec3 color = ambient + diffuse + specular;
+    gl_FragColor = vec4( color, 1.0 );
+}
+
+```
+See "Phong reflection model" at [Wikipedia](https://en.wikipedia.org/wiki/Phong_reflection_model).
